@@ -3,6 +3,7 @@ package br.com.consigned.userverificationservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +18,7 @@ import static br.com.consigned.userverificationservice.util.HashConverter.getHas
 public class ClientEntity {
 
     @Id
+//    @CPF(message = "Document invalid")
     @Column(name = "DOC_CLIENT")
     private String docClient;
 

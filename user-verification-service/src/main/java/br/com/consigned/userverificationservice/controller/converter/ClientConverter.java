@@ -21,7 +21,7 @@ public class ClientConverter {
                 .documentType(DocumentType.forCode(client.getDocumentType()))
                 .name(client.getName())
                 .accountHolder(client.isAccountHolder())
-                .segment(SegmentType.forCode(client.getSegment()))
+                .segment(client.getSegment() != null ? SegmentType.forCode(client.getSegment()) : null)
                 .agreement(AgreementType.forCode(client.getAgreement()))
                 .inclusionDate(client.getInclusionDate())
                 .build();
