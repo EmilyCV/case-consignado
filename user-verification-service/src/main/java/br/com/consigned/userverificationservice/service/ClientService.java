@@ -5,7 +5,6 @@ import br.com.consigned.userverificationservice.controller.request.ClientRequest
 import br.com.consigned.userverificationservice.controller.response.ClientResponse;
 import br.com.consigned.userverificationservice.entity.ClientEntity;
 import br.com.consigned.userverificationservice.repository.ClientRepository;
-import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
