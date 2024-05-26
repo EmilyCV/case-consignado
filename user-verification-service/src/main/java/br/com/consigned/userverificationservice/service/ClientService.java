@@ -10,13 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class ClientService {
 
     @Autowired
     private final ClientRepository clientRepository;
-
     private final ClientConverter clientConverter;
 
     public ClientService(ClientRepository clientRepository, ClientConverter clientConverter) {
@@ -27,13 +28,30 @@ public class ClientService {
     public ClientResponse save(ClientRequest clientRequest) {
         try {
             ClientEntity clientEntity = clientRepository.save(clientConverter.converter(clientRequest));
+
             return clientConverter.converter(clientEntity);
         } catch (DataAccessException ex) {
             log.error("Database error while saving client;error={}", ex.getMessage());
             throw new RuntimeException("Database error occurred ", ex);
         } catch (Exception ex) {
-            log.error("An unexpected error occurred while saving client;error={}", ex.getMessage());
-            throw new RuntimeException("An unexpected error occurred");
+            log.error("An error occurred while saving client;error={}", ex.getMessage());
+            throw new RuntimeException("An error occurred");
+        }
+    }
+
+    public List<ClientResponse> listAll() {
+        try {
+            List<ClientEntity> clientEntityList = clientRepository.findAll();
+
+            return clientEntityList.stream()
+                    .map(clientConverter::converter)
+                    .toList();
+        } catch (DataAccessException ex) {
+            log.error("Database error while retrieving clients;error={}", ex.getMessage());
+            throw new RuntimeException("Database error occurred ", ex);
+        } catch (Exception ex) {
+            log.error("An error occurred while retrieving clients;error={}", ex.getMessage());
+            throw new RuntimeException("An error occurred");
         }
     }
 }
