@@ -15,9 +15,9 @@ public enum SegmentType {
         return code;
     }
 
-    public static SegmentType forCode(int code) {
+    public static SegmentType forCode(Integer code) {
         for (SegmentType segmentType : SegmentType.values()) {
-            if (segmentType.getCode() == code) {
+            if (segmentType.getCode().equals(code)) {
                 return segmentType;
             }
         }

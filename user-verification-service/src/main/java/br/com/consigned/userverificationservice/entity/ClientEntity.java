@@ -1,19 +1,18 @@
 package br.com.consigned.userverificationservice.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 import static br.com.consigned.userverificationservice.util.HashConverter.getHash;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Table(name = "TCLI_CLIENT")
 public class ClientEntity {
 
@@ -21,9 +20,8 @@ public class ClientEntity {
     @Column(name = "DOC_CLIENT")
     private String docClient;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_DOCUMENT")
-    private DocumentTypeEntity documentType;
+    @Column(name = "ID_DOCUMENT")
+    private int documentType;
 
     @Column(name = "NAME_CLIENT")
     private String name;
@@ -31,13 +29,11 @@ public class ClientEntity {
     @Column(name = "ACCOUNT_HOLDER")
     private boolean accountHolder;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_SEGMENT")
-    private SegmentTypeEntity segment;
+    @Column(name = "ID_SEGMENT")
+    private Integer segment;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_AGREEMENT")
-    private AgreementTypeEntity agreement;
+    @Column(name = "ID_AGREEMENT")
+    private int agreement;
 
     @Column(name = "INCLUSION_DATE")
     @CreationTimestamp
