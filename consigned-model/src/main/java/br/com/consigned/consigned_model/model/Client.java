@@ -1,14 +1,24 @@
 package br.com.consigned.consigned_model.model;
 
+import br.com.consigned.consigned_model.enums.AgreementType;
+import br.com.consigned.consigned_model.enums.DocumentType;
+import br.com.consigned.consigned_model.enums.SegmentType;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.List;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-public class Client {
+@Getter
+@Setter
+@Builder
+public class Client implements Serializable {
     private String docClient;
+    private DocumentType documentType;
     private String name;
     private boolean accountHolder;
-    private String segment;
-    private String agreement;
-    private List<Simulation> simulations;
-    private List<Contract> contracts;
+    private SegmentType segment;
+    private AgreementType agreement;
+    private LocalDateTime inclusionDate;
 }
