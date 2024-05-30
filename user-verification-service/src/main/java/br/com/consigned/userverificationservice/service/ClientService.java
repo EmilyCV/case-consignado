@@ -1,22 +1,22 @@
 package br.com.consigned.userverificationservice.service;
 
+import br.com.consigned.consigned_model.model.Client;
 import br.com.consigned.userverificationservice.controller.converter.ClientConverter;
 import br.com.consigned.userverificationservice.controller.request.ClientRequest;
-import br.com.consigned.userverificationservice.controller.response.ClientResponse;
 import br.com.consigned.userverificationservice.entity.ClientEntity;
 import br.com.consigned.userverificationservice.repository.ClientRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static br.com.consigned.userverificationservice.util.HashConverter.getHash;
+
 @Slf4j
 @Service
 public class ClientService {
 
-    @Autowired
     private final ClientRepository clientRepository;
     private final ClientConverter clientConverter;
 
@@ -25,7 +25,8 @@ public class ClientService {
         this.clientConverter = clientConverter;
     }
 
-    public ClientResponse save(ClientRequest clientRequest) {
+
+    public Client save(ClientRequest clientRequest) {
         try {
             ClientEntity clientEntity = clientRepository.save(clientConverter.converter(clientRequest));
 
@@ -39,9 +40,14 @@ public class ClientService {
         }
     }
 
-    public List<ClientResponse> listAll() {
+    public List<Client> listAll(String document) {
         try {
-            List<ClientEntity> clientEntityList = clientRepository.findAll();
+            List<ClientEntity> clientEntityList;
+            if (document != null) {
+                clientEntityList = clientRepository.findByDocClient(getHash(document));
+            } else {
+                clientEntityList = clientRepository.findAll();
+            }
 
             return clientEntityList.stream()
                     .map(clientConverter::converter)

@@ -1,7 +1,7 @@
 package br.com.consigned.userverificationservice.controller;
 
+import br.com.consigned.consigned_model.model.Client;
 import br.com.consigned.userverificationservice.controller.request.ClientRequest;
-import br.com.consigned.userverificationservice.controller.response.ClientResponse;
 import br.com.consigned.userverificationservice.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,43 +26,43 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createClient(@Valid @RequestBody ClientRequest clientRequest, BindingResult result) {
+    public ResponseEntity<?> createClient(@Valid @RequestBody ClientRequest clientRequest) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start("createClient");
 
-        ClientResponse clientResponse = null;
+        Client client = null;
         try {
-            clientResponse = clientService.save(clientRequest);
+            client = clientService.save(clientRequest);
 
-            log.info("Client created successfully;client={}", clientResponse.toString());
-            return ResponseEntity.status(HttpStatus.CREATED).body(clientResponse);
+            log.info("Client created successfully;client={}", client.toString());
+            return ResponseEntity.status(HttpStatus.CREATED).body(client);
         } catch (Exception ex) {
             log.error("An error occurred while creating the client;error={};totalTime={}", ex, stopWatch.getTotalTimeSeconds());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         } finally {
             log.info("Operation completed;idOperation={};totalTime={};clientResponse={}", stopWatch.currentTaskName(), stopWatch.getTotalTimeSeconds(),
-                    clientResponse != null ? clientResponse.toString() : null);
+                    client != null ? client.toString() : null);
             stopWatch.stop();
         }
     }
 
     @GetMapping
-    public ResponseEntity<?> listAllClients() {
+    public ResponseEntity<?> listClients(@RequestParam(required = false) String document) {
         StopWatch stopWatch = new StopWatch();
-        stopWatch.start("listAllClients");
+        stopWatch.start("listClients");
 
-        List<ClientResponse> clientResponses = null;
+        List<Client> client = null;
         try {
-            clientResponses = clientService.listAll();
+            client = clientService.listAll(document);
 
-            log.info("Clients retrieved successfully;totalClients={}", clientResponses.size());
-            return ResponseEntity.status(HttpStatus.OK).body(clientResponses);
+            log.info("Clients retrieved successfully;totalClients={}", client.size());
+            return ResponseEntity.status(HttpStatus.OK).body(client);
         } catch (Exception ex) {
             log.error("An error occurred while retrieving clients;error={};totalTime={}", ex, stopWatch.getTotalTimeSeconds());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         } finally {
             log.info("Operation completed;idOperation={};totalTime={};clientResponses={}", stopWatch.currentTaskName(), stopWatch.getTotalTimeSeconds(),
-                    clientResponses != null ? clientResponses.toString() : null);
+                    client != null ? client.toString() : null);
             stopWatch.stop();
         }
     }

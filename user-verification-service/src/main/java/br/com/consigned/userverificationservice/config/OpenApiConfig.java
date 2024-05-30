@@ -13,7 +13,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Spring Boot REST API")
-                        .description("Application REST API to validate customer data")
+                        .description("Application REST API to validate customer data in user verification service")
                         .version("1.0.0"));
     }
 }

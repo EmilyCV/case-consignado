@@ -18,7 +18,7 @@ import static br.com.consigned.userverificationservice.util.HashConverter.getHas
 public class ClientEntity {
 
     @Id
-//    @CPF(message = "Document invalid")
+    @CPF
     @Column(name = "DOC_CLIENT")
     private String docClient;
 
