@@ -18,8 +18,7 @@ import java.util.List;
 @RequestMapping("api/v1/client")
 public class ClientController {
 
-    @Autowired
-    private ClientService clientService;
+    private final ClientService clientService;
 
     public ClientController(ClientService clientService) {
         this.clientService = clientService;
@@ -47,23 +46,49 @@ public class ClientController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listClients(@RequestParam(required = false) String document) {
+    public ResponseEntity<?> listAllClients() {
         StopWatch stopWatch = new StopWatch();
-        stopWatch.start("listClients");
+        stopWatch.start("listAllClients");
 
-        List<Client> client = null;
+        List<Client> clients = null;
         try {
-            client = clientService.listAll(document);
+            clients = clientService.listAll();
 
-            log.info("Clients retrieved successfully;totalClients={}", client.size());
-            return ResponseEntity.status(HttpStatus.OK).body(client);
+            log.info("Clients retrieved successfully;totalClients={}", clients.size());
+            return ResponseEntity.status(HttpStatus.OK).body(clients);
         } catch (Exception ex) {
             log.error("An error occurred while retrieving clients;error={};totalTime={}", ex, stopWatch.getTotalTimeSeconds());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         } finally {
+            if (stopWatch.isRunning()) {
+                stopWatch.stop();
+            }
             log.info("Operation completed;idOperation={};totalTime={};clientResponses={}", stopWatch.currentTaskName(), stopWatch.getTotalTimeSeconds(),
+                    clients != null ? clients.toString() : null);
+        }
+    }
+
+    @GetMapping("/{document}")
+    public ResponseEntity<?> getClientByDocument(@PathVariable String document) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start("getClientByDocument");
+        String currentTaskName = stopWatch.currentTaskName();
+
+        Client client = null;
+        try {
+            client = clientService.clientByDocument(document);
+
+            return ResponseEntity.status(HttpStatus.OK).body(client);
+
+        } catch (Exception ex) {
+            log.error("An error occurred while retrieving client;error={};totalTime={}", ex, stopWatch.getTotalTimeSeconds());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        } finally {
+            if (stopWatch.isRunning()) {
+                stopWatch.stop();
+            }
+            log.info("Operation completed;idOperation={};totalTime={};clientResponse={}", currentTaskName, stopWatch.getTotalTimeSeconds(),
                     client != null ? client.toString() : null);
-            stopWatch.stop();
         }
     }
 }

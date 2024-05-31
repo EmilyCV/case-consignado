@@ -1,4 +1,4 @@
-package br.com.consigned.userverificationservice.controller.converter;
+package br.com.consigned.userverificationservice.converter;
 
 import br.com.consigned.consigned_model.enums.AgreementType;
 import br.com.consigned.consigned_model.enums.DocumentType;
@@ -21,7 +21,7 @@ public class ClientConverter {
                 .documentType(DocumentType.forCode(client.getDocumentType()))
                 .name(client.getName())
                 .accountHolder(client.isAccountHolder())
-                .segment(client.getSegment() != null ? SegmentType.forCode(client.getSegment()) : null)
+                .segment(client.getSegment() != null ? SegmentType.forCode(client.getSegment()) : SegmentType.NAO_CORRENTISTA)
                 .agreement(AgreementType.forCode(client.getAgreement()))
                 .inclusionDate(client.getInclusionDate())
                 .build();
@@ -29,7 +29,7 @@ public class ClientConverter {
 
     public ClientEntity converter(ClientRequest client) {
         ClientEntity clientEntity = new ClientEntity();
-        clientEntity.setDocClient(client.getDocClient());
+        clientEntity.setDocClient(client.getDocClient().replaceAll("[^0-9]", ""));
         clientEntity.setDocumentType(CPF.getCode());
         clientEntity.setName(client.getName());
         clientEntity.setAccountHolder(client.isAccountHolder());
