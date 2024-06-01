@@ -68,7 +68,7 @@ public class SimulationService {
 
     }
 
-    public List<SimulationResponse> listSimulations(String idSimulation) {
+    public List<Simulation> listSimulations(Integer idSimulation) {
         try {
             List<SimulationEntity> simulationList = simulationRepository.listSimulationsByIdAndActiveSimulation(idSimulation);
 

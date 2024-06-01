@@ -39,9 +39,9 @@ public class SimulationController {
         return ResponseEntity.status(HttpStatus.OK).body(simulation);
     }
 
-    @GetMapping("/{simulation}")
-    public ResponseEntity<?> listSimulations(@RequestParam(required = false) String idSimulation) {
-        List<SimulationResponse> simulations = simulationService.listSimulations(idSimulation);
+    @GetMapping({"/{simulation}", "/"})
+    public ResponseEntity<?> listSimulations(@PathVariable(required = false) Integer simulation) {
+        List<Simulation> simulations = simulationService.listSimulations(simulation);
 
         log.info("Simulations retrieved successfully;totalSimulations={}", simulations.size());
         return ResponseEntity.status(HttpStatus.OK).body(simulations);

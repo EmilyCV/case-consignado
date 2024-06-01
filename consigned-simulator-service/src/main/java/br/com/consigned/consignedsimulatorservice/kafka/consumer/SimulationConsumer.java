@@ -1,6 +1,5 @@
 package br.com.consigned.consignedsimulatorservice.kafka.consumer;
 
-import br.com.consigned.consignedsimulatorservice.entity.SimulationEntity;
 import br.com.consigned.consignedsimulatorservice.model.SimulationRegistration;
 import br.com.consigned.consignedsimulatorservice.service.SimulationRegistrationService;
 import lombok.AllArgsConstructor;
@@ -15,10 +14,10 @@ public class SimulationConsumer {
 
     @KafkaListener(topics = "${topic.simulation.consumer.result-simulation}", groupId = "${topic.simulation.consumer.group-id}")
     public void receive(SimulationRegistration simulationRegistration) {
-        try{
+        try {
             simulationRegistrationService.saveSimulation(simulationRegistration);
-        } catch (Exception exception) {
-            throw new RuntimeException("Erro ao consumir mensagem do kafka ");
+        } catch (Exception e) {
+            throw new RuntimeException("Error when consuming message from Kafka {}", e);
         }
     }
 }
