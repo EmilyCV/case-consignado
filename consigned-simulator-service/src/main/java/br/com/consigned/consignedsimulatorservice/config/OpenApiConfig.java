@@ -1,4 +1,4 @@
-package br.com.consigned.userverificationservice.config;
+package br.com.consigned.consignedsimulatorservice.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -13,7 +13,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Spring Boot REST API")
-                        .description("Application REST API to validate customer data in user verification service")
+                        .description("Application REST API to manages simulations for the client")
                         .version("1.0.0"));
     }
 }

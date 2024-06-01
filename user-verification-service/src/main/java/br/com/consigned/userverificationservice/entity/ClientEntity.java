@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDateTime;
 
-import static br.com.consigned.userverificationservice.util.HashConverter.getHash;
+import static br.com.consigned.consigned_model.util.HashConverter.getHash;
 
 @Entity
 @Getter
@@ -18,7 +18,7 @@ import static br.com.consigned.userverificationservice.util.HashConverter.getHas
 public class ClientEntity {
 
     @Id
-//    @CPF(message = "Document invalid")
+//    @CPF
     @Column(name = "DOC_CLIENT")
     private String docClient;
 
