@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class SimulationRegistration {
-    private int idSimulation;
     private LocalDateTime dtSimulation;
     private String docClient;
     private int idAgreement;
