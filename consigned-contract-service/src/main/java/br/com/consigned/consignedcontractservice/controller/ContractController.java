@@ -1,4 +1,4 @@
-package br.com.consigned.useroperationservice.controller;
+package br.com.consigned.consignedcontractservice.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
