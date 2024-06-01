@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class Simulation {
+    private int idSimulation;
     private LocalDateTime dtSimulation;
     private String docClient;
     private BigDecimal requestAmount;

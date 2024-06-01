@@ -13,5 +13,5 @@ public interface SimulationRepository extends JpaRepository<SimulationEntity, In
 
     @Query("SELECT simu FROM SimulationEntity simu WHERE simu.activeSimulation = true " +
             "AND (:idSimulation IS NULL OR simu.idSimulation = :idSimulation)")
-    List<SimulationEntity> listSimulationsByIdAndActiveSimulation(@Param("idSimulation") String idSimulation);
+    List<SimulationEntity> listSimulationsByIdAndActiveSimulation(@Param("idSimulation") Integer idSimulation);
 }

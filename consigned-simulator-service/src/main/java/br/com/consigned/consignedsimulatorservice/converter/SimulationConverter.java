@@ -2,7 +2,6 @@ package br.com.consigned.consignedsimulatorservice.converter;
 
 import br.com.consigned.consigned_model.enums.AgreementType;
 import br.com.consigned.consigned_model.model.Simulation;
-import br.com.consigned.consignedsimulatorservice.controller.response.SimulationResponse;
 import br.com.consigned.consignedsimulatorservice.entity.SimulationEntity;
 import br.com.consigned.consignedsimulatorservice.model.SimulationRegistration;
 import org.springframework.stereotype.Component;
@@ -23,8 +22,8 @@ public class SimulationConverter {
                 .build();
     }
 
-    public SimulationResponse converter(SimulationEntity simulation) {
-        return SimulationResponse.builder()
+    public Simulation converter(SimulationEntity simulation) {
+        return Simulation.builder()
                 .idSimulation(simulation.getIdSimulation())
                 .dtSimulation(simulation.getDtSimulation())
                 .docClient(simulation.getDocClient())
