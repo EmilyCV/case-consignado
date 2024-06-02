@@ -10,11 +10,8 @@ import br.com.consigned.consignedcontractservice.repository.ContractRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -43,56 +40,31 @@ public class ContractService {
     }
 
     public Simulation getSimulation(Integer simulation) {
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-            ResponseEntity<List<Simulation>> response = restTemplate.exchange(
-                    endpointSimulation + simulation, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<>() {
-                    });
+        ResponseEntity<List<Simulation>> response = restTemplate.exchange(
+                endpointSimulation + simulation, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<>() {
+                });
 
-            return Objects.requireNonNull(response.getBody()).stream().findFirst().orElse(null);
-        } catch (HttpStatusCodeException e) {
-            log.error("HTTP status code exception occurred during client validation;statusCode={};responseBody={}", e.getStatusCode(), e.getResponseBodyAsString());
-            throw new RuntimeException(e);
-        } catch (RestClientException e) {
-            log.error("Rest client exception occurred during client validation;errorMessage={}", e.getMessage());
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            log.error("An unexpected error occurred during client validation;errorMessage={}", e.getMessage());
-            throw new RuntimeException(e);
-        }
+        return Objects.requireNonNull(response.getBody()).stream().findFirst().orElse(null);
     }
 
     public Contract createContract(Simulation simulation) {
-        try {
-            Contract contract = Contract.builder()
-                    .dtContract(LocalDateTime.now())
-                    .simulation(simulation)
-                    .build();
+        Contract contract = Contract.builder()
+                .dtContract(LocalDateTime.now())
+                .simulation(simulation)
+                .build();
 
-            contractProducer.sendContractRegistration(contractConverter.converter(contract));
-            return contract;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        contractProducer.sendContractRegistration(contractConverter.converter(contract));
+        return contract;
     }
 
     public List<ContractResponse> listContracts(Integer idContract) {
-        try {
-            List<ContractEntity> contractList = contractRepository.listContract(idContract);
+        List<ContractEntity> contractList = contractRepository.listContract(idContract);
 
-            return contractList != null ? contractList.stream()
-                    .map(contractConverter::converter)
-                    .toList() : Collections.emptyList();
-        } catch (DataAccessException ex) {
-            log.error("Database error while retrieving simulation;error={}", ex.getMessage());
-            throw new RuntimeException("Database error occurred ", ex);
-        } catch (Exception ex) {
-            log.error("An error occurred while retrieving simulation;error={}", ex.getMessage());
-            throw new RuntimeException("An error occurred");
-        }
+        return contractList != null ? contractList.stream()
+                .map(contractConverter::converter)
+                .toList() : Collections.emptyList();
     }
 }

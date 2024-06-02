@@ -18,22 +18,18 @@ public class SimulationRegistrationService {
     }
 
     public void saveSimulation(SimulationRegistration simulationRegistration) {
-        try {
-            SqlParameterSource sql = new MapSqlParameterSource()
-                    .addValue("param_dtSimulation", simulationRegistration.getDtSimulation())
-                    .addValue("param_docClient", simulationRegistration.getDocClient())
-                    .addValue("param_idAgreement", simulationRegistration.getIdAgreement())
-                    .addValue("param_requestAmount", simulationRegistration.getRequestAmount())
-                    .addValue("param_rateApplied", simulationRegistration.getRateApplied())
-                    .addValue("param_qtdInstallments", simulationRegistration.getQtdInstallments())
-                    .addValue("param_ttlAmountPay", simulationRegistration.getTtlAmountPay())
-                    .addValue("param_installmentsValue", simulationRegistration.getInstallmentsValue())
-                    .addValue("param_activeSimulation", simulationRegistration.isActiveSimulation() ? 1 : 0);
+        SqlParameterSource sql = new MapSqlParameterSource()
+                .addValue("param_dtSimulation", simulationRegistration.getDtSimulation())
+                .addValue("param_docClient", simulationRegistration.getDocClient())
+                .addValue("param_idAgreement", simulationRegistration.getIdAgreement())
+                .addValue("param_requestAmount", simulationRegistration.getRequestAmount())
+                .addValue("param_rateApplied", simulationRegistration.getRateApplied())
+                .addValue("param_qtdInstallments", simulationRegistration.getQtdInstallments())
+                .addValue("param_ttlAmountPay", simulationRegistration.getTtlAmountPay())
+                .addValue("param_installmentsValue", simulationRegistration.getInstallmentsValue())
+                .addValue("param_activeSimulation", simulationRegistration.isActiveSimulation() ? 1 : 0);
 
-            jdbc.withProcedureName("PROC_REGISTRATION_SIMULATION");
-            jdbc.execute(sql);
-        } catch (Exception e) {
-            throw new RuntimeException("Error while saving simulation", e);
-        }
+        jdbc.withProcedureName("PROC_REGISTRATION_SIMULATION");
+        jdbc.execute(sql);
     }
 }

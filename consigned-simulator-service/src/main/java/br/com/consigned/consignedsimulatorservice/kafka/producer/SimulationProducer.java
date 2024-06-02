@@ -20,10 +20,6 @@ public class SimulationProducer {
     }
 
     public void sendSimulationRegistration(SimulationRegistration simulationRegistration) {
-        try {
-            kafkaTemplate.send(topic, simulationRegistration);
-        } catch (Exception e) {
-            throw new RuntimeException("Error producing kafka message");
-        }
+        kafkaTemplate.send(topic, simulationRegistration);
     }
 }
