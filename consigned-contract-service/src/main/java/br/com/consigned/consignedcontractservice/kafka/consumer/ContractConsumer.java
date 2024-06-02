@@ -13,10 +13,6 @@ public class ContractConsumer {
 
     @KafkaListener(topics = "${topic.contract.consumer.result-contract}", groupId = "${topic.contract.consumer.group-id}")
     public void receive(ContractRegistration contractRegistration) {
-        try {
-            contractRegistrationService.saveContract(contractRegistration);
-        } catch (Exception e) {
-            throw new RuntimeException("Error when consuming message from Kafka {}", e);
-        }
+        contractRegistrationService.saveContract(contractRegistration);
     }
 }

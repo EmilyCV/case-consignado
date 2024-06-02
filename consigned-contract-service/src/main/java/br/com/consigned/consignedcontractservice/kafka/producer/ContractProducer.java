@@ -1,6 +1,5 @@
 package br.com.consigned.consignedcontractservice.kafka.producer;
 
-import br.com.consigned.consigned_model.model.Contract;
 import br.com.consigned.consignedcontractservice.model.ContractRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,10 +20,7 @@ public class ContractProducer {
     }
 
     public void sendContractRegistration(ContractRegistration contractRegistration) {
-        try {
-            kafkaTemplate.send(topic, contractRegistration);
-        } catch (Exception e) {
-            throw new RuntimeException("Error producing kafka message");
-        }
+        kafkaTemplate.send(topic, contractRegistration);
+
     }
 }

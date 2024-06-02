@@ -6,9 +6,9 @@ import br.com.consigned.userverificationservice.controller.request.ClientRequest
 import br.com.consigned.userverificationservice.entity.ClientEntity;
 import br.com.consigned.userverificationservice.repository.ClientRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static br.com.consigned.consigned_model.util.HashConverter.getHash;
@@ -27,47 +27,19 @@ public class ClientService {
 
 
     public Client save(ClientRequest clientRequest) {
-        try {
-            ClientEntity clientEntity = clientRepository.save(clientConverter.converter(clientRequest));
-
-            return clientConverter.converter(clientEntity);
-        } catch (DataAccessException ex) {
-            log.error("Database error while saving client;error={}", ex.getMessage());
-            throw new RuntimeException("Database error occurred ", ex);
-        } catch (Exception ex) {
-            log.error("An error occurred while saving client;error={}", ex.getMessage());
-            throw new RuntimeException("An error occurred");
-        }
+        ClientEntity clientEntity = clientRepository.save(clientConverter.converter(clientRequest));
+        return clientConverter.converter(clientEntity);
     }
 
     public List<Client> listAll() {
-        try {
-            List<ClientEntity> clientEntityList = clientRepository.findAll();
-
-            return clientEntityList.stream()
-                    .map(clientConverter::converter)
-                    .toList();
-        } catch (DataAccessException ex) {
-            log.error("Database error while retrieving clients;error={}", ex.getMessage());
-            throw new RuntimeException("Database error occurred ", ex);
-        } catch (Exception ex) {
-            log.error("An error occurred while retrieving clients;error={}", ex.getMessage());
-            throw new RuntimeException("An error occurred");
-        }
+        List<ClientEntity> clientEntityList = clientRepository.findAll();
+        return clientEntityList.stream()
+                .map(clientConverter::converter)
+                .toList();
     }
 
-    public Client clientByDocument(String document) {
-        try {
-            ClientEntity clientEntity = clientRepository.findByDocClient(getHash(document));
-
-            return clientEntity != null ? clientConverter.converter(clientEntity) : null;
-
-        } catch (DataAccessException ex) {
-            log.error("Database error while retrieving clients;error={}", ex.getMessage());
-            throw new RuntimeException("Database error occurred ", ex);
-        } catch (Exception ex) {
-            log.error("An error occurred while retrieving clients;error={}", ex.getMessage());
-            throw new RuntimeException("An error occurred");
-        }
+    public Client clientByDocument(String document) throws NoSuchAlgorithmException {
+        ClientEntity clientEntity = clientRepository.findByDocClient(getHash(document));
+        return clientEntity != null ? clientConverter.converter(clientEntity) : null;
     }
 }

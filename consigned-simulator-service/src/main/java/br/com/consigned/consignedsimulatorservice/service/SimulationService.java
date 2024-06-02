@@ -2,20 +2,18 @@ package br.com.consigned.consignedsimulatorservice.service;
 
 import br.com.consigned.consigned_model.model.Client;
 import br.com.consigned.consigned_model.model.Simulation;
-import br.com.consigned.consignedsimulatorservice.controller.response.SimulationResponse;
 import br.com.consigned.consignedsimulatorservice.converter.SimulationConverter;
 import br.com.consigned.consignedsimulatorservice.entity.SimulationEntity;
+import br.com.consigned.consignedsimulatorservice.exception.CustomerNotFoundException;
+import br.com.consigned.consignedsimulatorservice.exception.InstallmentsLimitExceededException;
 import br.com.consigned.consignedsimulatorservice.kafka.producer.SimulationProducer;
 import br.com.consigned.consignedsimulatorservice.model.InformationCalculation;
 import br.com.consigned.consignedsimulatorservice.model.SimulationRegistration;
 import br.com.consigned.consignedsimulatorservice.repository.SimulationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -46,63 +44,40 @@ public class SimulationService {
     }
 
     public Client validationClient(String document) {
-        try {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+        ResponseEntity<Client> response = restTemplate.exchange(
+                endpointVerification + document, HttpMethod.GET, new HttpEntity<>(headers), Client.class);
 
-            ResponseEntity<Client> response = restTemplate.exchange(
-                    endpointVerification + document, HttpMethod.GET, new HttpEntity<>(headers), Client.class);
-
-            return response.getBody();
-        } catch (HttpStatusCodeException e) {
-            log.error("HTTP status code exception occurred during client validation;statusCode={};responseBody={}", e.getStatusCode(), e.getResponseBodyAsString());
-            throw new RuntimeException(e);
-        } catch (RestClientException e) {
-            log.error("Rest client exception occurred during client validation;errorMessage={}", e.getMessage());
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            log.error("An unexpected error occurred during client validation;errorMessage={}", e.getMessage());
-            throw new RuntimeException(e);
+        if (response.getBody() == null) {
+            throw new CustomerNotFoundException();
         }
 
+        return response.getBody();
     }
 
     public List<Simulation> listSimulations(Integer idSimulation) {
-        try {
-            List<SimulationEntity> simulationList = simulationRepository.listSimulationsByIdAndActiveSimulation(idSimulation);
+        List<SimulationEntity> simulationList = simulationRepository.listSimulationsByIdAndActiveSimulation(idSimulation);
 
-            return simulationList != null ? simulationList.stream()
-                    .map(simulationConverter::converter)
-                    .toList() : Collections.emptyList();
-        } catch (DataAccessException ex) {
-            log.error("Database error while retrieving simulation;error={}", ex.getMessage());
-            throw new RuntimeException("Database error occurred ", ex);
-        } catch (Exception ex) {
-            log.error("An error occurred while retrieving simulation;error={}", ex.getMessage());
-            throw new RuntimeException("An error occurred");
-        }
+        return simulationList != null ? simulationList.stream()
+                .map(simulationConverter::converter)
+                .toList() : Collections.emptyList();
     }
 
     public Simulation createSimulation(Integer qtdInstallments, BigDecimal valueConsigned, Client client) {
-        try {
-            if (qtdInstallments != null && qtdInstallments > client.getSegment().getInstallment()) {
-                throw new IllegalArgumentException("The number of installments exceeds that allowed for the segment: " + client.getSegment().name());
-            }
-
-            InformationCalculation information = informationCalculationService.findInformation(
-                    client.getAgreement().getCode(), client.getSegment().getCode(), client.isAccountHolder());
-
-            SimulationRegistration simulation = createSimulationEntity(client, valueConsigned, information, qtdInstallments);
-
-            simulationProducer.sendSimulationRegistration(simulation);
-
-            return simulationConverter.converter(simulation);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (qtdInstallments != null && qtdInstallments > client.getSegment().getInstallment()) {
+            throw new InstallmentsLimitExceededException(client.getSegment().name());
         }
+
+        InformationCalculation information = informationCalculationService.findInformation(
+                client.getAgreement().getCode(), client.getSegment().getCode(), client.isAccountHolder());
+
+        SimulationRegistration simulation = createSimulationEntity(client, valueConsigned, information, qtdInstallments);
+
+        simulationProducer.sendSimulationRegistration(simulation);
+
+        return simulationConverter.converter(simulation);
     }
 
     private SimulationRegistration createSimulationEntity(Client client, BigDecimal valueConsigned, InformationCalculation information, Integer qtdInstallments) {
