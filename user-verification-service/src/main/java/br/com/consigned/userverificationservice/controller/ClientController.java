@@ -40,7 +40,7 @@ public class ClientController {
     }
 
     @GetMapping("/{document}")
-    public ResponseEntity<?> getClientByDocument(@PathVariable String document) throws NoSuchAlgorithmException {
+    public ResponseEntity<?> getClientByDocument(@PathVariable String document) {
         Client client = clientService.clientByDocument(document);
         return ResponseEntity.status(HttpStatus.OK).body(client);
 
