@@ -4,6 +4,8 @@ services:
     build: ./api-gateway
     ports:
       - "8080:8080"
+    networks:
+      - kafka-net
     environment:
       - spring.main.web-application-type=reactive
     depends_on:
@@ -16,12 +18,16 @@ services:
     image: user-verification-service:latest
     ports:
       - "8081:8081"
+    networks:
+      - kafka-net
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://user-verification-db:3306/consigned_client
     depends_on:
       - user-verification-db
   user-verification-db:
     image: mysql:8.0
+    networks:
+      - kafka-net
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: consigned_client
@@ -33,29 +39,41 @@ services:
     image: consigned-simulator-service:latest
     ports:
       - "8082:8082"
+    networks:
+      - kafka-net
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://consigned-simulator-db:3306/consigned_simulation
+      - CONSIGNED_VERIFICATION_URL=http://user-verification-service:8081/api/v1/client/
     depends_on:
       - consigned-simulator-db
   consigned-simulator-db:
     image: mysql:8.0
+    networks:
+      - kafka-net
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: consigned_simulation
     volumes:
       - consigned-simulator-data:/var/lib/mysql
+      - ./database/simulation/script_creation_database_simulation.sql:/docker-entrypoint-initdb.d/script_creation_database_simulation.sql
+      - ./database/simulation/script_initial_simulation.sql:/docker-entrypoint-initdb.d/script_initial_simulation.sql
+      - ./database/procedure/SIMU_PROC_REGISTRATION_SIMULATION.sql:/docker-entrypoint-initdb.d/SIMU_PROC_REGISTRATION_SIMULATION.sql
 
   consigned-contract-service:
     build: ./consigned-contract-service
     image: consigned-contract-service:latest
     ports:
       - "8083:8083"
+    networks:
+      - kafka-net
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://consigned-contract-db:3306/consigned_contract
     depends_on:
       - consigned-contract-db
   consigned-contract-db:
     image: mysql:8.0
+    networks:
+      - kafka-net
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: consigned_contract

@@ -10,7 +10,7 @@ CREATE PROCEDURE PROC_REGISTRATION_SIMULATION(
     param_activeSimulation TINYINT(1)
 )
 BEGIN
-	DECLARE ID_EXIST INT;
+	DECLARE ID_EXIST INT DEFAULT 0;
     
     -- Verifica se já existe uma simulação com parâmetros iguais e ativa
     SELECT ID_SIMU INTO ID_EXIST
