@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Slf4j
@@ -40,7 +39,7 @@ public class ClientController {
     }
 
     @GetMapping("/{document}")
-    public ResponseEntity<?> getClientByDocument(@PathVariable String document) throws NoSuchAlgorithmException {
+    public ResponseEntity<?> getClientByDocument(@PathVariable String document) {
         Client client = clientService.clientByDocument(document);
         return ResponseEntity.status(HttpStatus.OK).body(client);
 

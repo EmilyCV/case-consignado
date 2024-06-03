@@ -4,6 +4,17 @@
 CREATE SCHEMA IF NOT EXISTS consigned_simulation;
 USE consigned_simulation;
 
+-- -----------------------------------------------------
+-- Table tsimu_segment_type
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS TSIMU_SEGMENT_TYPE (
+  ID_SEGM INT NOT NULL,
+  SEGM_TYPE VARCHAR(100) NOT NULL,
+  PRIMARY KEY (ID_SEGM),
+  UNIQUE INDEX SEGM_TYPE (SEGM_TYPE ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table tsimu_agreement_type
@@ -18,20 +29,6 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
-
--- -----------------------------------------------------
--- Table tsimu_segment_type
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS TSIMU_SEGMENT_TYPE (
-  ID_SEGM INT NOT NULL,
-  SEGM_TYPE VARCHAR(100) NOT NULL,
-  PRIMARY KEY (ID_SEGM),
-  UNIQUE INDEX SEGM_TYPE (SEGM_TYPE ASC) VISIBLE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
 -- -----------------------------------------------------
 -- Table tsimu_installment_details
 -- -----------------------------------------------------
@@ -45,7 +42,7 @@ CREATE TABLE IF NOT EXISTS TSIMU_INSTALLMENT_DETAILS (
   INDEX fk_tsimu_installment_details_tsimu_segment_type_idx (ID_SEGMENT ASC) VISIBLE,
   CONSTRAINT fk_tsimu_installment_details_tsimu_segment_type
     FOREIGN KEY (ID_SEGMENT)
-    REFERENCES tsimu_segment_type (ID_SEGM))
+    REFERENCES TSIMU_SEGMENT_TYPE (ID_SEGM))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -79,8 +76,8 @@ CREATE TABLE IF NOT EXISTS TSIMU_SIMULATION (
   PRIMARY KEY (ID_SIMU),
   INDEX fk_tsimu_simulation_tsimu_agreement_type1_idx (ID_AGREEMENT ASC) VISIBLE,
   CONSTRAINT fk_tsimu_simulation_tsimu_agreement_type1
-    FOREIGN KEY (ID_AGREEMENT)
-    REFERENCES tsimu_agreement_type (ID_AGRM)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+      FOREIGN KEY (ID_AGREEMENT)
+      REFERENCES TSIMU_AGREEMENT_TYPE (ID_AGRM)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION)
 ENGINE = InnoDB;

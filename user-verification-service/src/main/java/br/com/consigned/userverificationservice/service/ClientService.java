@@ -8,7 +8,6 @@ import br.com.consigned.userverificationservice.repository.ClientRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static br.com.consigned.consigned_model.util.HashConverter.getHash;
@@ -38,7 +37,7 @@ public class ClientService {
                 .toList();
     }
 
-    public Client clientByDocument(String document) throws NoSuchAlgorithmException {
+    public Client clientByDocument(String document) {
         ClientEntity clientEntity = clientRepository.findByDocClient(getHash(document));
         return clientEntity != null ? clientConverter.converter(clientEntity) : null;
     }

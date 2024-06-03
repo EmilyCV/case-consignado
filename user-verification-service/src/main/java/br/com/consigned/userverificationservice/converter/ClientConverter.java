@@ -36,8 +36,6 @@ public class ClientConverter {
         clientEntity.setSegment(client.getSegment());
         clientEntity.setAgreement(client.getAgreement());
         clientEntity.setInclusionDate(LocalDateTime.now());
-
         return clientEntity;
     }
-
 }

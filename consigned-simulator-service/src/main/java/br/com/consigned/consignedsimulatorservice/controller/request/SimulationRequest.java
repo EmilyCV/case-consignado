@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.math.BigDecimal;
 
 @Getter
+@Setter
 public class SimulationRequest {
 
     @NotNull(message = "The document the client is obligatory")
