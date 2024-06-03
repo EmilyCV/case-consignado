@@ -1,30 +1,25 @@
 version: "3"
 services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - spring.main.web-application-type=reactive
+    depends_on:
+      - user-verification-service
+      - consigned-simulator-service
+      - consigned-contract-service
+
   user-verification-service:
     build: ./user-verification-service
     image: user-verification-service:latest
     ports:
       - "8081:8081"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://consigned_client:3306/consigned_client
+      - SPRING_DATASOURCE_URL=jdbc:mysql://user-verification-db:3306/consigned_client
     depends_on:
       - user-verification-db
-  #  consigned-simulator-service:
-  #    build: ./consigned-simulator-service
-  #    ports:
-  #      - "8082:8082"
-  #    environment:
-  #      - SPRING_DATASOURCE_URL=jdbc:mysql://consigned_simulation:3306/consigned_simulation
-  #    depends_on:
-  #      - mysql
-  #  consigned-contract-service:
-  #    build: ./consigned-contract-service
-  #    ports:
-  #      - "8083:8083"
-  #    environment:
-  #      - SPRING_DATASOURCE_URL=jdbc:mysql://consigned_contract:3306/consigned_contract
-  #    depends_on:
-  #      - mysql
   user-verification-db:
     image: mysql:8.0
     environment:
@@ -32,6 +27,40 @@ services:
       MYSQL_DATABASE: consigned_client
     volumes:
       - user-verification-data:/var/lib/mysql
+
+  consigned-simulator-service:
+    build: ./consigned-simulator-service
+    image: consigned-simulator-service:latest
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://consigned-simulator-db:3306/consigned_simulation
+    depends_on:
+      - consigned-simulator-db
+  consigned-simulator-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: consigned_simulation
+    volumes:
+      - consigned-simulator-data:/var/lib/mysql
+
+  consigned-contract-service:
+    build: ./consigned-contract-service
+    image: consigned-contract-service:latest
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://consigned-contract-db:3306/consigned_contract
+    depends_on:
+      - consigned-contract-db
+  consigned-contract-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: consigned_contract
+    volumes:
+      - consigned-contract-data:/var/lib/mysql
 
   zookeeper:
     container_name: zookeeper
@@ -42,6 +71,7 @@ services:
       - "2181:2181"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+
   kafka:
     container_name: kafka
     image: "bitnami/kafka:latest"
@@ -61,6 +91,8 @@ services:
 
 volumes:
   user-verification-data:
+  consigned-simulator-data:
+  consigned-contract-data:
 
 networks:
   kafka-net:
